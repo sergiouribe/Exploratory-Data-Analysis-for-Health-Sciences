@@ -1,0 +1,360 @@
+---
+title: "Exploratory Data Analysis for Health Professionals"
+author: Sergio Uribe
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: true
+    fig_caption: true
+---
+
+# Introduction
+
+# Packages
+```{r packages}
+library(tidyverse)
+```
+
+Data from NHANES
+```{r NHANES data}
+install.packages("NHANES")
+library(NHANES)
+data(NHANES)
+```
+
+This dataset contains the Body Shape and related measurements from the US National Health
+and Nutrition Examination Survey (NHANES, 1999-2004). See
+http://www.cdc.gov/nchs/nhanes.htm for details.
+
+
+
+# EDA
+
+```{r dim}
+dim(NHANES)
+```
+
+```{r colnames}
+colnames(NHANES)
+```
+
+
+```{r head }
+head(NHANES)
+```
+
+
+```{r view dataset}
+glimpse(NHANES)
+```
+
+
+```{r summary}
+summary(NHANES)
+```
+
+### Skim package for EDA
+```{r skim package}
+install.packages("skimr")
+library(skimr)
+```
+
+```{r skim all variables}
+skim(NHANES)
+```
+
+
+```{r skim some variables}
+skim(NHANES, Gender, Depressed, Diabetes, Height, Weight)
+```
+
+```{r skim few variables}
+NHANES %>% 
+         select(Gender, Weight) %>% 
+        group_by(Gender) %>% 
+        skim()
+```
+
+
+
+## visdat package for NA
+```{r visdat package}
+install.packages("visdat")
+library(visdat)
+```
+
+```{r visdat}
+vis_dat(NHANES)
+```
+
+
+## Simple tables
+```{r table one factor}
+table(NHANES$Gender)
+```
+
+```{r table one factor another example}
+table(NHANES$Education)
+```
+
+
+2x2 tables
+
+```{r table two factors}
+table(NHANES$Gender, NHANES$Diabetes)
+```
+
+Add margin totals
+
+```{r table with margins totals}
+addmargins(table(NHANES$Gender, NHANES$Diabetes))
+```
+
+Proportion table
+
+```{r prop table}
+prop.table(table(NHANES$Gender, NHANES$Diabetes))
+```
+
+As percentage
+```{r prop table as %}
+prop.table(table(NHANES$Gender, NHANES$Diabetes))*100
+```
+
+with two decimals
+
+```{r limit decimals}
+options(digits = 3)
+prop.table(table(NHANES$Gender, NHANES$Diabetes))*100
+```
+
+Combining addmargins and prop.table
+
+```{r table combined}
+addmargins(prop.table(table(NHANES$Gender, NHANES$Diabetes))*100)
+```
+
+```{r n x n x n tables}
+table(NHANES$Gender,  # rows
+      NHANES$Education,  # columns
+      NHANES$Diabetes) # factor
+```
+#### Other tables packages
+With xtabs
+```{r xtabs}
+xtabs(~ Gender +
+              Education +
+              Diabetes,
+      data=NHANES)
+```
+
+With ftables
+```{r ftable}
+ftable(NHANES$Gender,  # rows
+      NHANES$Education,  # columns
+      NHANES$Diabetes) # factor
+```
+
+
+
+
+#### Nice Output tables
+```{r gmodels}
+install.packages("gmodels")
+library(gmodels)
+CrossTable(NHANES$Gender, NHANES$Diabetes, 
+           digits = 2, 
+           prop.r = T, # If TRUE, row proportions will be included
+           prop.c = T, # If TRUE, column proportions will be included
+           prop.t = F, # If TRUE, table proportions will be included
+           prop.chisq = FALSE, # If TRUE, chi-square contribution of each cell will be included
+           chisq = TRUE, #If TRUE, the results of a chi-square test will be included
+           dnn = c("Gender", "Diabetes"))
+```
+
+
+## Visualizations
+
+### Continuous data
+```{r histogram}
+NHANES %>% 
+        ggplot(aes(x = Age)) +
+        geom_histogram()
+```
+
+Change the bins
+
+```{r change bins to 5}
+NHANES %>% 
+        ggplot(aes(x = Age)) +
+        geom_histogram(bins = 5)
+```
+
+```{r change bins to 10}
+NHANES %>% 
+        ggplot(aes(x = Age)) +
+        geom_histogram(bins = 10)
+```
+
+```{r scatterplot}
+NHANES %>% 
+        ggplot(aes(x = Height, y = Weight)) +
+        geom_point()
+```
+
+```{r add regression line}
+NHANES %>% 
+        ggplot(aes(x = Height, y = Weight)) +
+        geom_point() +
+        geom_smooth()
+```
+
+
+```{r add regression line}
+NHANES %>% 
+        filter(!is.na(DirectChol)) %>% 
+        ggplot(aes(x = Height, y = Weight, color = Gender)) +
+        geom_point(alpha = 0.3)
+```
+
+
+
+### Categorical data
+
+#### Barplots
+```{r barplots}
+NHANES %>% 
+        ggplot(aes(x = Diabetes)) +
+        geom_bar()
+```
+
+```{r order axis}
+NHANES %>% 
+        ggplot(aes(x = Education)) + 
+        geom_bar()
+```
+Flip categories
+
+```{r flip axis}
+NHANES %>% 
+        ggplot(aes(x = Education)) + 
+        geom_bar() + 
+        coord_flip()
+```
+
+Eliminate NAs
+
+```{r ploy without NAs}
+NHANES %>%
+        filter(!is.na(Education)) %>% 
+        ggplot(aes(x = Education)) + 
+        geom_bar() + 
+        coord_flip()
+```
+
+Add a factor
+```{r ploy without NAs}
+NHANES %>%
+        filter(!is.na(Education)) %>% 
+        ggplot(aes(x = Education, fill = Gender)) + 
+        geom_bar() + 
+        coord_flip() 
+```
+
+Nicely formated
+```{r ploy without NAs}
+NHANES %>%
+        filter(!is.na(Education)) %>% 
+        ggplot(aes(x = Education, fill = Gender)) + 
+        geom_bar() + 
+        coord_flip() +
+        theme_minimal() + 
+        labs(title = "Educational level by gender", 
+             subtitle = "Data fron NHANES, 2014", 
+             y = "Count", 
+             x = "Educational level")
+        
+```
+
+#### By groups
+```{r one group}
+NHANES %>% 
+        ggplot(aes(x = Height)) +
+        geom_histogram()
+```
+
+
+```{r two groups}
+NHANES %>% 
+        ggplot(aes(x = Height, fill = Gender)) +
+        geom_histogram()
+```
+
+```{r add alpha}
+NHANES %>% 
+        ggplot(aes(x = Height, fill = Gender)) +
+        geom_histogram( alpha=.7, 
+                        bins = 15) 
+```
+#### Boxplots
+
+```{r boxplots}
+NHANES %>% 
+        ggplot(aes(x = Gender, y = Height)) +
+        geom_boxplot()
+```
+
+Dirty option: limit the coordinates
+```{r}
+NHANES %>% 
+        ggplot(aes(x = Gender, y = Height)) +
+        geom_boxplot() + 
+        scale_y_continuous(limits=c(75,150))
+```
+
+More elegant solution, with R Base
+
+```{r}
+boxplot(NHANES$Height~NHANES$Gender,
+        horizontal = F,
+        axes = T,
+        outline = FALSE)
+```
+
+
+#### Categorical data independence
+
+```{r}
+mosaicplot(table(NHANES$Gender, NHANES$Diabetes))
+```
+
+```{r}
+mosaicplot(table(NHANES$Gender, NHANES$Diabetes), shade = T)
+```
+
+Exploring some associations
+
+```{r}
+mosaicplot(table(NHANES$Diabetes, NHANES$PhysActive), shade = T)
+```
+
+
+## Numerical summaries
+For all variables
+```{r}
+summary(NHANES)
+```
+
+For one variable
+```{r}
+summary(NHANES$Age)
+```
+
+### Create table summaries
+
+```{r}
+NHANES %>% 
+        group_by(Gender) %>% 
+        summarise(n = n(), "Mean age" = mean(Age), SD = sd(Age))
+```
+
