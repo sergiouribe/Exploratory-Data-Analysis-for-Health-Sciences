@@ -36,9 +36,12 @@ http://www.cdc.gov/nchs/nhanes.htm for details.
 
 # EDA
 
+## Dataframe EDA
+
+### Basic EDA
 Explore the dataset (opens a new window)
 
-```{r}
+```{r view}
 View(NHANES)
 ```
 
@@ -71,7 +74,7 @@ glimpse(NHANES)
 summary(NHANES)
 ```
 
-### Skim package for EDA
+#### Skim package for EDA
 ```{r skim package}
 install.packages("skimr")
 library(skimr)
@@ -93,7 +96,7 @@ NHANES %>%
         skim()
 ```
 
-## Ubicar NAs
+#### Ubicar NAs
 
 ```{r find NAs}
 sum(is.na(NHANES))
@@ -101,7 +104,7 @@ sum(is.na(NHANES))
 
 
 
-## visdat package for NA
+### visdat package for NA
 ```{r visdat package}
 install.packages("visdat")
 library(visdat)
@@ -124,7 +127,13 @@ vis_miss(NHANES,
 
 
 
-## Simple tables
+
+## Numerical EDA
+
+### EDA with tables
+#### Simple tables
+
+##### One factor table
 ```{r table one factor}
 table(NHANES$Gender)
 ```
@@ -134,7 +143,7 @@ table(NHANES$Education)
 ```
 
 
-2x2 tables
+##### 2x2 tables
 
 ```{r table two factors}
 table(NHANES$Gender, NHANES$Diabetes)
@@ -170,6 +179,7 @@ Combining addmargins and prop.table
 addmargins(prop.table(table(NHANES$Gender, NHANES$Diabetes))*100)
 ```
 
+##### N x N tables
 ```{r n x n x n tables}
 table(NHANES$Gender,  # rows
       NHANES$Education,  # columns
@@ -209,7 +219,49 @@ CrossTable(NHANES$Gender, NHANES$Diabetes,
 ```
 
 
-## Visualizations
+
+### EDA with numerical summaries
+For all variables
+```{r summary all variables}
+summary(NHANES)
+```
+
+For one variable
+```{r summary one var}
+summary(NHANES$Age)
+```
+
+#### Create table summaries
+
+```{r table summaries with dplyr}
+NHANES %>% 
+        group_by(Gender) %>% 
+        summarise(n = n(), "Mean age" = mean(Age), SD = sd(Age))
+```
+
+
+#### Advanced tables
+
+Two tipes of variables
+  - one
+  - many
+
+Two types of functions
+  - one
+  - many
+  
+
+
+|           |      | Functions         |                                                 |
+|-----------|------|-------------------|-------------------------------------------------|
+|           |      | one               | many                                            |
+| Variables | one  | mtcars %>%,summarise (mean_mpg = mean(mpg))                        | mtcars %>%,summarise (min_mpg = min(mpg), max_mpg = max(mpg))                                              |
+|           | many | mtcars %>%,summarise(mean_mpg = mean(mpg), mean_disp = mean(disp)) | mtcars %>%,summarise(min_mpg = min(mpg) , min_disp = min(disp), max_mpg = max(mpg) , max_disp = max(disp)) |
+
+
+## Visual EDA
+
+
 
 ### Continuous data
 ```{r histogram}
@@ -424,43 +476,6 @@ mosaicplot(table(NHANES$Diabetes, NHANES$PhysActive), shade = T)
 ```
 
 
-## Numerical summaries
-For all variables
-```{r summary all variables}
-summary(NHANES)
-```
-
-For one variable
-```{r summary one var}
-summary(NHANES$Age)
-```
-
-### Create table summaries
-
-```{r table summaries with dplyr}
-NHANES %>% 
-        group_by(Gender) %>% 
-        summarise(n = n(), "Mean age" = mean(Age), SD = sd(Age))
-```
-
-
-#### Advanced tables
-
-Two tipes of variables
-  - one
-  - many
-
-Two types of functions
-  - one
-  - many
-  
-
-
-|           |      | Functions                                                          |                                                                                                            |
-|-----------|------|--------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-|           |      | one                                                                | many                                                                                                       |
-| Variables | one  | mtcars %>%,summarise (mean_mpg = mean(mpg))                        | mtcars %>%,summarise (min_mpg = min(mpg), max_mpg = max(mpg))                                              |
-|           | many | mtcars %>%,summarise(mean_mpg = mean(mpg), mean_disp = mean(disp)) | mtcars %>%,summarise(min_mpg = min(mpg) , min_disp = min(disp), max_mpg = max(mpg) , max_disp = max(disp)) |
 
 # Recapitulation
 
