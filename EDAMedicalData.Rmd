@@ -11,6 +11,12 @@ output:
 # Introduction
 
 # Packages
+  - [tidyverse](http://r4ds.had.co.nz/)
+  - [NHANES ](https://cran.r-project.org/web/packages/NHANES/index.html)
+  - [skimr](https://cran.r-project.org/web/packages/skimr/index.html)
+  - [gmodels](https://cran.r-project.org/web/packages/gmodels/index.html)
+  - [visdat](https://github.com/ropensci/visdat)
+
 ```{r packages}
 library(tidyverse)
 ```
@@ -30,19 +36,31 @@ http://www.cdc.gov/nchs/nhanes.htm for details.
 
 # EDA
 
+Explore the dataset (opens a new window)
+
+```{r}
+View(NHANES)
+```
+
+View numbers of rows and columns
+
 ```{r dim}
 dim(NHANES)
 ```
+
+View names of columns
 
 ```{r colnames}
 colnames(NHANES)
 ```
 
+first 6 rows
 
 ```{r head }
 head(NHANES)
 ```
 
+Try ```tail(NHANES)``` to see last 6 rows
 
 ```{r view dataset}
 glimpse(NHANES)
@@ -92,6 +110,18 @@ library(visdat)
 ```{r visdat}
 vis_dat(NHANES)
 ```
+Visualize missing data
+
+```{r vis_miss}
+vis_miss(NHANES)
+```
+
+Clustered
+```{r vis_miss clustered}
+vis_miss(NHANES, 
+         cluster = TRUE)
+```
+
 
 
 ## Simple tables
@@ -446,6 +476,7 @@ What we learned
 # Advanced data manipulation
 ## Create variables
 mutate
+
 
 
 
