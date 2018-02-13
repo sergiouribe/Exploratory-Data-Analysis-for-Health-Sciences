@@ -441,3 +441,11 @@ What we learned
   - find NA values
   - create summary tables
   - create visualizations of categorical, continuous or both data
+  
+  
+# Advanced data manipulation
+## Create variables
+mutate
+
+
+
