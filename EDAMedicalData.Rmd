@@ -75,6 +75,12 @@ NHANES %>%
         skim()
 ```
 
+## Ubicar NAs
+
+```{r find NAs}
+sum(is.na(NHANES))
+```
+
 
 
 ## visdat package for NA
@@ -196,6 +202,31 @@ NHANES %>%
         geom_histogram(bins = 10)
 ```
 
+```{r age and height}
+NHANES %>% 
+        ggplot(aes(x = Age, y = Height)) + 
+        geom_point() 
+```
+
+```{r age and height 2}
+NHANES %>% 
+        ggplot(aes(x = Age, y = Height)) + 
+        geom_point() +
+        scale_x_log10()
+```
+
+
+```{r age and height 3}
+NHANES %>% 
+        ggplot(aes(x = Age, y = Height, color = Gender)) + 
+        geom_point() +
+        scale_x_log10() +
+        geom_smooth()
+```
+
+
+
+
 ```{r scatterplot}
 NHANES %>% 
         ggplot(aes(x = Height, y = Weight)) +
@@ -210,7 +241,7 @@ NHANES %>%
 ```
 
 
-```{r add regression line}
+```{r add regression line 2}
 NHANES %>% 
         filter(!is.na(DirectChol)) %>% 
         ggplot(aes(x = Height, y = Weight, color = Gender)) +
@@ -244,7 +275,7 @@ NHANES %>%
 
 Eliminate NAs
 
-```{r ploy without NAs}
+```{r plot without NAs}
 NHANES %>%
         filter(!is.na(Education)) %>% 
         ggplot(aes(x = Education)) + 
@@ -253,7 +284,7 @@ NHANES %>%
 ```
 
 Add a factor
-```{r ploy without NAs}
+```{r plot without NAs and filled with color}
 NHANES %>%
         filter(!is.na(Education)) %>% 
         ggplot(aes(x = Education, fill = Gender)) + 
@@ -296,6 +327,30 @@ NHANES %>%
         geom_histogram( alpha=.7, 
                         bins = 15) 
 ```
+
+### Continuous and categorical
+
+```{r coninuous and categorical in boxplot}
+
+NHANES %>%
+        filter(!is.na(Diabetes)) %>% 
+        ggplot(aes(x = Diabetes, y = BMI )) +
+        geom_boxplot()
+        
+```
+
+```{r histogram faceting}
+NHANES %>% 
+        filter(!is.na(Education)) %>% 
+        ggplot(aes(x = BMI)) + 
+        geom_histogram(bins = 15) + 
+        scale_x_log10() + 
+        facet_wrap(~Education)
+```
+
+
+
+
 #### Boxplots
 
 ```{r boxplots}
@@ -305,7 +360,7 @@ NHANES %>%
 ```
 
 Dirty option: limit the coordinates
-```{r}
+```{r boxplots with axis adjusted}
 NHANES %>% 
         ggplot(aes(x = Gender, y = Height)) +
         geom_boxplot() + 
@@ -314,7 +369,7 @@ NHANES %>%
 
 More elegant solution, with R Base
 
-```{r}
+```{r boxplot adjusted with rbase}
 boxplot(NHANES$Height~NHANES$Gender,
         horizontal = F,
         axes = T,
@@ -324,37 +379,65 @@ boxplot(NHANES$Height~NHANES$Gender,
 
 #### Categorical data independence
 
-```{r}
+```{r mosaic 1}
 mosaicplot(table(NHANES$Gender, NHANES$Diabetes))
 ```
 
-```{r}
+```{r mosaic with shade}
 mosaicplot(table(NHANES$Gender, NHANES$Diabetes), shade = T)
 ```
 
 Exploring some associations
 
-```{r}
+```{r example mosiac with shade}
 mosaicplot(table(NHANES$Diabetes, NHANES$PhysActive), shade = T)
 ```
 
 
 ## Numerical summaries
 For all variables
-```{r}
+```{r summary all variables}
 summary(NHANES)
 ```
 
 For one variable
-```{r}
+```{r summary one var}
 summary(NHANES$Age)
 ```
 
 ### Create table summaries
 
-```{r}
+```{r table summaries with dplyr}
 NHANES %>% 
         group_by(Gender) %>% 
         summarise(n = n(), "Mean age" = mean(Age), SD = sd(Age))
 ```
 
+
+#### Advanced tables
+
+Two tipes of variables
+  - one
+  - many
+
+Two types of functions
+  - one
+  - many
+  
+
+
+|           |      | Functions                                                          |                                                                                                            |
+|-----------|------|--------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+|           |      | one                                                                | many                                                                                                       |
+| Variables | one  | mtcars %>%,summarise (mean_mpg = mean(mpg))                        | mtcars %>%,summarise (min_mpg = min(mpg), max_mpg = max(mpg))                                              |
+|           | many | mtcars %>%,summarise(mean_mpg = mean(mpg), mean_disp = mean(disp)) | mtcars %>%,summarise(min_mpg = min(mpg) , min_disp = min(disp), max_mpg = max(mpg) , max_disp = max(disp)) |
+
+# Recapitulation
+
+What we learned
+
+  - explore datasets
+  - summarise datasets or variables
+  - find NA values
+  - create summary tables
+  - create visualizations of categorical, continuous or both data
