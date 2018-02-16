@@ -63,6 +63,9 @@ first 6 rows
 head(NHANES)
 ```
 
+
+
+
 Try ```tail(NHANES)``` to see last 6 rows
 
 ```{r view dataset}
@@ -70,8 +73,21 @@ glimpse(NHANES)
 ```
 
 
+
 ```{r summary}
 summary(NHANES)
+```
+
+Leave only one year 
+
+```{r filter year}
+
+NHANES <- NHANES %>% 
+        filter(SurveyYr == "2011_12")
+```
+
+```{r dim new NAHES with year filtered}
+dim(NHANES)
 ```
 
 #### Skim package for EDA
@@ -89,7 +105,7 @@ skim(NHANES)
 skim(NHANES, Gender, Depressed, Diabetes, Height, Weight)
 ```
 
-```{r skim few variables}
+```{r skim few variables by group}
 NHANES %>% 
          select(Gender, Weight) %>% 
         group_by(Gender) %>% 
@@ -102,6 +118,18 @@ NHANES %>%
 sum(is.na(NHANES))
 ```
 
+```{r NA data}
+sum(!is.na(NHANES))
+
+```
+
+```{r not NA data}
+sum(!is.na(NHANES)) + sum(is.na(NHANES))
+```
+
+```{r how much data is NA?}
+sum(is.na(NHANES)) / ( sum(!is.na(NHANES)) + sum(is.na(NHANES)) ) * 100
+```
 
 
 ### visdat package for NA
@@ -240,6 +268,14 @@ NHANES %>%
 ```
 
 
+```{r table summaries with percentage}
+NHANES %>% 
+        group_by(Gender) %>% 
+        summarise( "Mean age" = mean(Age), SD = sd(Age), n = n()) %>% 
+        mutate(Percentage = n / sum(n) * 100)
+```
+
+
 #### Advanced tables
 
 Two tipes of variables
@@ -264,6 +300,8 @@ Two types of functions
 
 
 ### Continuous data
+
+#### One variable
 ```{r histogram}
 NHANES %>% 
         ggplot(aes(x = Age)) +
@@ -284,6 +322,7 @@ NHANES %>%
         geom_histogram(bins = 10)
 ```
 
+#### Two variables
 ```{r age and height}
 NHANES %>% 
         ggplot(aes(x = Age, y = Height)) + 
@@ -297,13 +336,13 @@ NHANES %>%
         scale_x_log10()
 ```
 
+#### More than two variables
 
 ```{r age and height 3}
 NHANES %>% 
         ggplot(aes(x = Age, y = Height, color = Gender)) + 
         geom_point() +
-        scale_x_log10() +
-        geom_smooth()
+        scale_x_log10()
 ```
 
 
@@ -315,21 +354,24 @@ NHANES %>%
         geom_point()
 ```
 
-```{r add regression line}
-NHANES %>% 
-        ggplot(aes(x = Height, y = Weight)) +
-        geom_point() +
-        geom_smooth()
-```
 
 
-```{r add regression line 2}
+```{r add alpha 2}
 NHANES %>% 
-        filter(!is.na(DirectChol)) %>% 
+        filter(!is.na(Gender)) %>% 
         ggplot(aes(x = Height, y = Weight, color = Gender)) +
         geom_point(alpha = 0.3)
 ```
+Now prepare for publication
 
+```{r for publication}
+NHANES %>% 
+        filter(!is.na(Gender)) %>% 
+        ggplot(aes(x = Height, y = Weight, color = Gender)) +
+        geom_point(alpha = 0.3) + 
+        theme_minimal() + 
+        labs(title = "Height and weight", subtitle = "NHANES 2009-10")
+```
 
 
 ### Categorical data
@@ -383,7 +425,7 @@ NHANES %>%
         coord_flip() +
         theme_minimal() + 
         labs(title = "Educational level by gender", 
-             subtitle = "Data fron NHANES, 2014", 
+             subtitle = "Data fron NHANES, 2009-10", 
              y = "Count", 
              x = "Educational level")
         
@@ -472,7 +514,9 @@ mosaicplot(table(NHANES$Gender, NHANES$Diabetes), shade = T)
 Exploring some associations
 
 ```{r example mosiac with shade}
-mosaicplot(table(NHANES$Diabetes, NHANES$PhysActive), shade = T)
+mosaicplot(table(NHANES$Diabetes, NHANES$PhysActive), 
+           main = "Diabetes and Physical activity", 
+           shade = T)
 ```
 
 
