@@ -35,7 +35,6 @@ http://www.cdc.gov/nchs/nhanes.htm for details.
 
 
 # EDA
-
 ## Dataframe EDA
 
 ### Basic EDA
@@ -157,7 +156,6 @@ vis_miss(NHANES,
 
 
 ## Numerical EDA
-
 ### EDA with tables
 #### Simple tables
 
@@ -296,9 +294,6 @@ Two types of functions
 
 
 ## Visual EDA
-
-
-
 ### Continuous data
 
 #### One variable
