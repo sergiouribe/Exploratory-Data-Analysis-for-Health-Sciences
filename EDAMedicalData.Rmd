@@ -10,6 +10,16 @@ output:
 
 # Introduction
 
+
+Este libro está escrito por un dentista investigador para dentistas investigadores. Uno de los problemas que tenemos los investigadores es que a veces se crea una brecha entre quienes generamos preguntas y los datos y quienes realizan el análisis. Y con el advenimiento de computadoras más potentes, existe la tentación de usar exóticos modelos estadísticos que son difíciles de comprender y más aun de interpretar. Sin embargo, una buena investigación, o sea aquella con una pregunta clara, un diseño apropiado y una recolección honesta de datos debería 
+
+Dejar que los datos hablen. Los datos tienen una historia y debemos dejar que nos la cuenten. 
+
+Flujo de datos a información y conocimiento. 
+
+EL investigador dental puede no conocer los detalles del modelado estadístico, pero debería conocer y manejar las técnicas de análisis exploratorio de datos. Espero que este libro ayude a los investigadores con esta crucial tarea: el análisis exploratorio de datos (EDA).
+
+
 # Packages
   - [tidyverse](http://r4ds.had.co.nz/)
   - [NHANES ](https://cran.r-project.org/web/packages/NHANES/index.html)
@@ -23,7 +33,7 @@ library(tidyverse)
 
 Data from NHANES
 ```{r NHANES data}
-install.packages("NHANES")
+# install.packages("NHANES")
 library(NHANES)
 data(NHANES)
 ```
@@ -40,15 +50,21 @@ http://www.cdc.gov/nchs/nhanes.htm for details.
 ### Basic EDA
 Explore the dataset (opens a new window)
 
+```{r dim}
+dim(NHANES)
+```
+
+```{r}
+cname
+```
+
 ```{r view}
 View(NHANES)
 ```
 
 View numbers of rows and columns
 
-```{r dim}
-dim(NHANES)
-```
+
 
 View names of columns
 
